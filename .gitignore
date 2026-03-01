@@ -1,0 +1,11 @@
+node_modules
+*.log
+.env
+.env.*
+data/*.db
+data/*.db-*
+apps/web/dist
+apps/api/dist
+packages/shared/dist
+coverage
+playwright-report
