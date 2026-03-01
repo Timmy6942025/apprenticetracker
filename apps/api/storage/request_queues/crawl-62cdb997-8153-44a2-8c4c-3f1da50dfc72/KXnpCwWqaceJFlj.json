@@ -1,9 +1,0 @@
-{
-	"id": "KXnpCwWqaceJFlj",
-	"json": "{\"id\":\"KXnpCwWqaceJFlj\",\"url\":\"https://www.linkedin.com/jobs/search/?keywords=software%20apprentice&location=England%2C%20United%20Kingdom\",\"uniqueKey\":\"linkedin:https://www.linkedin.com/jobs/search/?keywords=software%20apprentice&location=England%2C%20United%20Kingdom\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"source\":\"linkedin_jobs\"}}",
-	"method": "GET",
-	"orderNo": 1772311533445,
-	"retryCount": 0,
-	"uniqueKey": "linkedin:https://www.linkedin.com/jobs/search/?keywords=software%20apprentice&location=England%2C%20United%20Kingdom",
-	"url": "https://www.linkedin.com/jobs/search/?keywords=software%20apprentice&location=England%2C%20United%20Kingdom"
-}

@@ -1,9 +1,0 @@
-{
-	"id": "urmPOkiLv5PZchW",
-	"json": "{\"id\":\"urmPOkiLv5PZchW\",\"url\":\"https://www.findapprenticeship.service.gov.uk/apprenticeships?pageNumber=12\",\"loadedUrl\":\"https://www.findapprenticeship.service.gov.uk/apprenticeships?pageNumber=12\",\"uniqueKey\":\"find_apprenticeship_gov_uk:https://www.findapprenticeship.service.gov.uk/apprenticeships?pageNumber=12\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"source\":\"find_apprenticeship_gov_uk\",\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-02-28T21:05:23.025Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "find_apprenticeship_gov_uk:https://www.findapprenticeship.service.gov.uk/apprenticeships?pageNumber=12",
-	"url": "https://www.findapprenticeship.service.gov.uk/apprenticeships?pageNumber=12"
-}

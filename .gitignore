@@ -7,5 +7,7 @@ data/*.db-*
 apps/web/dist
 apps/api/dist
 packages/shared/dist
+packages/shared/*.tsbuildinfo
+apps/api/storage
 coverage
 playwright-report

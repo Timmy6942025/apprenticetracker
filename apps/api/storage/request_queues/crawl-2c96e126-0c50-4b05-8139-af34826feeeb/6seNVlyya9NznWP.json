@@ -1,9 +1,0 @@
-{
-	"id": "6seNVlyya9NznWP",
-	"json": "{\"id\":\"6seNVlyya9NznWP\",\"url\":\"https://www.linkedin.com/jobs/search/?keywords=business%20apprentice&location=England%2C%20United%20Kingdom\",\"loadedUrl\":\"https://www.linkedin.com/jobs/search/?keywords=business%20apprentice&location=England%2C%20United%20Kingdom\",\"uniqueKey\":\"linkedin:https://www.linkedin.com/jobs/search/?keywords=business%20apprentice&location=England%2C%20United%20Kingdom\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"source\":\"linkedin_jobs\",\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-02-28T21:05:16.039Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "linkedin:https://www.linkedin.com/jobs/search/?keywords=business%20apprentice&location=England%2C%20United%20Kingdom",
-	"url": "https://www.linkedin.com/jobs/search/?keywords=business%20apprentice&location=England%2C%20United%20Kingdom"
-}
