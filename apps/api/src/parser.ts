@@ -33,11 +33,18 @@ function uuidFromHash(hash: string): string {
   return `${hash.slice(0, 8)}-${hash.slice(8, 12)}-${hash.slice(12, 16)}-${hash.slice(16, 20)}-${hash.slice(20, 32)}`;
 }
 
-export function rawToRecord(
+export type ParseRejectReason = "missing_posted_date" | "rejected_category";
+
+export interface RawToRecordResult {
+  record: ApprenticeshipRecord | null;
+  reason: ParseRejectReason | null;
+}
+
+export function rawToRecordWithReason(
   raw: RawListing,
   nowIso: string,
   allowedCategories?: readonly Category[]
-): ApprenticeshipRecord | null {
+): RawToRecordResult {
   let postedDate = raw.posted_date_iso ?? null;
   if (!postedDate && raw.source === "find_apprenticeship_gov_uk" && raw.posted_text) {
     postedDate = parsePostedDateToIso(raw.posted_text);
@@ -45,28 +52,40 @@ export function rawToRecord(
   if (!postedDate && raw.source === "linkedin_jobs") {
     postedDate = parseLinkedinPostedToIso(raw.posted_text);
   }
-  if (!postedDate) return null;
+  if (!postedDate) return { record: null, reason: "missing_posted_date" };
   const categories = classifyCategories(raw.title, raw.description_snippet, allowedCategories);
-  if (categories.length === 0) return null;
+  if (categories.length === 0) return { record: null, reason: "rejected_category" };
 
   const hash = hashListing(raw, postedDate);
   const id = uuidFromHash(hash);
 
   return {
-    id,
-    source: raw.source,
-    source_listing_id: raw.source_listing_id,
-    title: raw.title,
-    employer: raw.employer,
-    location: raw.location,
-    posted_date: postedDate,
-    closing_date: normalizeMaybeDate(raw.closing_text),
-    url: raw.url,
-    description_snippet: raw.description_snippet,
-    categories,
-    salary_text: raw.salary_text,
-    listing_hash: hash,
-    created_at: nowIso,
-    updated_at: nowIso
+    reason: null,
+    record: {
+      id,
+      source: raw.source,
+      source_listing_id: raw.source_listing_id,
+      title: raw.title,
+      employer: raw.employer,
+      location: raw.location,
+      posted_date: postedDate,
+      closing_date: normalizeMaybeDate(raw.closing_text),
+      url: raw.url,
+      description_snippet: raw.description_snippet,
+      categories,
+      salary_text: raw.salary_text,
+      listing_hash: hash,
+      created_at: nowIso,
+      updated_at: nowIso
+    }
   };
+}
+
+export function rawToRecord(
+  raw: RawListing,
+  nowIso: string,
+  allowedCategories?: readonly Category[]
+): ApprenticeshipRecord | null {
+  const result = rawToRecordWithReason(raw, nowIso, allowedCategories);
+  return result.record;
 }

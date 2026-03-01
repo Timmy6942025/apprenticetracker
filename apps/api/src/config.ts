@@ -8,7 +8,8 @@ const projectRoot = path.resolve(currentDir, "..", "..", "..");
 const defaultLinkedinKeywords = [
   "software apprentice",
   "business apprentice",
-  "data analyst apprentice"
+  "data analyst apprentice",
+  "finance apprentice"
 ];
 
 function parseCsvEnv(value: string | undefined): string[] {
@@ -17,6 +18,14 @@ function parseCsvEnv(value: string | undefined): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function parseBooleanEnv(value: string | undefined, fallback: boolean): boolean {
+  if (value == null) return fallback;
+  const normalized = value.trim().toLowerCase();
+  if (["1", "true", "yes", "on"].includes(normalized)) return true;
+  if (["0", "false", "no", "off"].includes(normalized)) return false;
+  return fallback;
 }
 
 function isCategory(value: string): value is Category {
@@ -52,8 +61,14 @@ export const config = {
     process.env.SOURCE_START_URL ?? "https://www.findapprenticeship.service.gov.uk/apprenticeships",
   linkedinKeywords: effectiveLinkedinKeywords,
   linkedinSourceStartUrls: buildLinkedinUrls(effectiveLinkedinKeywords, linkedinLocation),
+  linkedinListOnly: parseBooleanEnv(process.env.LINKEDIN_LIST_ONLY, true),
   targetCategories,
   crawlMaxPages: Number(process.env.CRAWL_MAX_PAGES ?? 20),
-  crawlMaxRequests: Number(process.env.CRAWL_MAX_REQUESTS ?? 200),
+  crawlMaxRequests: Number(process.env.CRAWL_MAX_REQUESTS ?? 80),
+  crawlMaxConcurrency: Number(process.env.CRAWL_MAX_CONCURRENCY ?? 1),
+  crawlMaxRetries: Number(process.env.CRAWL_MAX_RETRIES ?? 0),
+  crawlJitterMinMs: Number(process.env.CRAWL_JITTER_MIN_MS ?? 1500),
+  crawlJitterMaxMs: Number(process.env.CRAWL_JITTER_MAX_MS ?? 5000),
+  snapshotDir: process.env.EXTRACTION_SNAPSHOT_DIR ?? path.resolve(projectRoot, "data", "extraction-failures"),
   cutoffDays: Number(process.env.CUTOFF_DAYS ?? 45)
 };

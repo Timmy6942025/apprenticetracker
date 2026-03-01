@@ -11,4 +11,15 @@ describe("classifyCategories", () => {
     const categories = classifyCategories("Business Data Analyst Apprentice", "data analysis and operations");
     expect(categories).toEqual(expect.arrayContaining(["business", "data_analyst"]));
   });
+
+  it("applies negative keywords to reduce false positives", () => {
+    const categories = classifyCategories("Business Intelligence Analyst Apprentice", "SQL and BI dashboards");
+    expect(categories).toContain("data_analyst");
+    expect(categories).not.toContain("business");
+  });
+
+  it("detects finance category", () => {
+    const categories = classifyCategories("Finance Apprentice", "Support accounting, payroll, and tax filings");
+    expect(categories).toContain("finance");
+  });
 });

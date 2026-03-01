@@ -7,7 +7,7 @@ import { runCrawl } from "./crawler.js";
 import { cutoffDateIso } from "./time.js";
 
 const querySchema = z.object({
-  category: z.enum(["tech", "business", "data_analyst"]).optional(),
+  category: z.enum(["tech", "business", "data_analyst", "finance"]).optional(),
   source: z.enum(["find_apprenticeship_gov_uk", "linkedin_jobs"]).optional(),
   q: z.string().optional(),
   posted_after: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),

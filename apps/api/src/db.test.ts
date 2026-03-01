@@ -39,4 +39,46 @@ describe("AppDb upsert", () => {
 
     db.close();
   });
+
+  it("dedupes equivalent listings across sources", () => {
+    const db = new AppDb(tempDbPath());
+    const now = "2026-02-10T00:00:00.000Z";
+
+    const gov = {
+      id: "00000000-0000-0000-0000-000000000101",
+      source: "find_apprenticeship_gov_uk" as const,
+      source_listing_id: "gov-1",
+      title: "Software Developer Apprentice",
+      employer: "Acme Ltd",
+      location: "London",
+      posted_date: "2026-02-10",
+      closing_date: "2026-03-01",
+      url: "https://example.com/apprenticeship/gov-1",
+      description_snippet: "Full detail description from gov source",
+      categories: ["tech"] as const,
+      salary_text: "£20,000",
+      listing_hash: "gh1",
+      created_at: now,
+      updated_at: now
+    };
+
+    const linkedin = {
+      ...gov,
+      id: "00000000-0000-0000-0000-000000000102",
+      source: "linkedin_jobs" as const,
+      source_listing_id: "li-1",
+      url: "https://www.linkedin.com/jobs/view/123",
+      description_snippet: "Short linkedin summary",
+      listing_hash: "lh1"
+    };
+
+    expect(db.upsertApprenticeship(gov)).toBe("inserted");
+    expect(db.upsertApprenticeship(linkedin)).toBe("deduped");
+
+    const list = db.listApprenticeships({ page: 1, page_size: 10 });
+    expect(list.total).toBe(1);
+    expect(list.items[0]?.source).toBe("find_apprenticeship_gov_uk");
+
+    db.close();
+  });
 });

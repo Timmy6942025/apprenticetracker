@@ -7,7 +7,8 @@ const CATEGORIES = [
   { label: "All", value: "" },
   { label: "Tech", value: "tech" },
   { label: "Business", value: "business" },
-  { label: "Data Analyst", value: "data_analyst" }
+  { label: "Data Analyst", value: "data_analyst" },
+  { label: "Finance", value: "finance" }
 ] as const;
 
 const SOURCES = [
@@ -115,7 +116,7 @@ export function App() {
       <header className="topbar">
         <div>
           <h1>England Apprenticeship Tracker</h1>
-          <p>Aggregates Gov + LinkedIn apprenticeship roles from the last 45 days in tech, business, and data analyst.</p>
+          <p>Aggregates Gov + LinkedIn apprenticeship roles from the last 45 days in tech, business, data analyst, and finance.</p>
         </div>
         <button type="button" onClick={() => void onRunCrawl()} disabled={runLoading}>
           {runLoading ? "Running crawl..." : "Run crawl now"}

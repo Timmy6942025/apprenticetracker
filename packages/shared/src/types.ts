@@ -1,4 +1,4 @@
-export type Category = "tech" | "business" | "data_analyst";
+export type Category = "tech" | "business" | "data_analyst" | "finance";
 export type ApprenticeshipSource = "find_apprenticeship_gov_uk" | "linkedin_jobs";
 
 export interface ApprenticeshipRecord {
@@ -26,8 +26,14 @@ export interface CrawlRun {
   status: "running" | "success" | "failed";
   pages_crawled: number;
   records_seen: number;
+  records_accepted: number;
   records_inserted: number;
   records_updated: number;
+  records_rejected_category: number;
+  records_rejected_date: number;
+  records_rejected_location: number;
+  records_rejected_schema: number;
+  records_deduped: number;
   records_filtered_old: number;
   errors_count: number;
   error_message: string | null;
