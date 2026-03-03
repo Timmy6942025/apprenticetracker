@@ -19,6 +19,7 @@ const querySchema = z.object({
 export function buildServer(dbPath = config.dbPath) {
   const app = Fastify({ logger: true });
   const db = new AppDb(dbPath);
+  db.markAllRunningRunsFailed("Run reset after API restart");
   let crawlInFlight: Promise<Awaited<ReturnType<typeof runCrawl>>> | null = null;
   let lastCrawlTriggerAt = 0;
 
@@ -61,6 +62,17 @@ export function buildServer(dbPath = config.dbPath) {
 
   app.post("/api/crawl/run", async (request, reply) => {
     const now = Date.now();
+
+    if (crawlInFlight) {
+      const latest = db.latestRun();
+      if (latest?.status === "running") {
+        const ageMs = now - Date.parse(latest.started_at);
+        if (latest.pages_crawled === 0 && ageMs > 120000) {
+          db.markRunFailed(latest.id, "Run watchdog reset stale in-memory crawl lock");
+          crawlInFlight = null;
+        }
+      }
+    }
 
     if (crawlInFlight) {
       return reply.status(409).send({

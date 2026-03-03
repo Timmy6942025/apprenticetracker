@@ -2,6 +2,7 @@ import os from "node:os";
 import path from "node:path";
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
+import type { CrawlRun } from "@apprentice/shared";
 import { AppDb } from "./db.js";
 
 function tempDbPath(): string {
@@ -78,6 +79,39 @@ describe("AppDb upsert", () => {
     const list = db.listApprenticeships({ page: 1, page_size: 10 });
     expect(list.total).toBe(1);
     expect(list.items[0]?.source).toBe("find_apprenticeship_gov_uk");
+
+    db.close();
+  });
+
+  it("marks stale running runs as failed", () => {
+    const db = new AppDb(tempDbPath());
+    const run: CrawlRun = {
+      id: "run-stale-1",
+      started_at: "2026-03-03T00:00:00.000Z",
+      finished_at: null,
+      status: "running",
+      pages_crawled: 0,
+      records_seen: 0,
+      records_accepted: 0,
+      records_inserted: 0,
+      records_updated: 0,
+      records_rejected_category: 0,
+      records_rejected_date: 0,
+      records_rejected_location: 0,
+      records_rejected_schema: 0,
+      records_deduped: 0,
+      records_filtered_old: 0,
+      errors_count: 0,
+      error_message: null
+    };
+
+    db.startRun(run);
+    expect(db.markAllRunningRunsFailed("stale reset")).toBe(1);
+
+    const latest = db.latestRun();
+    expect(latest?.status).toBe("failed");
+    expect(latest?.error_message).toBe("stale reset");
+    expect(latest?.finished_at).not.toBeNull();
 
     db.close();
   });

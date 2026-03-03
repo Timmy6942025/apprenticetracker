@@ -284,12 +284,15 @@ export async function runCrawl(db: AppDb): Promise<CrawlRun> {
         const source = data.source ?? "find_apprenticeship_gov_uk";
         const kind = data.kind ?? "list";
 
-        // LinkedIn frequently blocks detail-page requests. Fall back to list-card data instead of failing the run.
-        if (source === "linkedin_jobs" && kind === "detail" && isBlocked429(error) && data.seed) {
-          const normalized = normalizeListing(data.seed);
-          ingestNormalizedListing(normalized);
-
-          log.warning(`LinkedIn detail blocked (429), used list fallback: ${request.url}`);
+        // LinkedIn rate-limit responses are expected under load. Do not fail the whole crawl.
+        if (source === "linkedin_jobs" && isBlocked429(error)) {
+          if (kind === "detail" && data.seed) {
+            const normalized = normalizeListing(data.seed);
+            ingestNormalizedListing(normalized);
+            log.warning(`LinkedIn detail blocked (429), used list fallback: ${request.url}`);
+            return;
+          }
+          log.warning(`LinkedIn list request blocked (429), skipping: ${request.url}`);
           return;
         }
 
@@ -301,7 +304,8 @@ export async function runCrawl(db: AppDb): Promise<CrawlRun> {
 
     await crawler.run();
 
-    run.status = run.errors_count > 0 ? "failed" : "success";
+    const hasUsefulOutput = run.records_inserted > 0 || run.records_updated > 0 || run.records_accepted > 0;
+    run.status = run.errors_count > 0 && !hasUsefulOutput ? "failed" : "success";
     run.finished_at = nowIso();
     db.finishRun(run);
     return run;

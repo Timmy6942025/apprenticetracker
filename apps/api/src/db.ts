@@ -228,6 +228,46 @@ export class AppDb {
       .run(run);
   }
 
+  markRunFailed(id: string, errorMessage: string): void {
+    this.db
+      .prepare(
+        `
+          UPDATE crawl_runs
+          SET
+            finished_at = COALESCE(finished_at, @finished_at),
+            status = 'failed',
+            errors_count = errors_count + 1,
+            error_message = @error_message
+          WHERE id = @id
+        `
+      )
+      .run({
+        id,
+        finished_at: new Date().toISOString(),
+        error_message: errorMessage
+      });
+  }
+
+  markAllRunningRunsFailed(errorMessage: string): number {
+    const result = this.db
+      .prepare(
+        `
+          UPDATE crawl_runs
+          SET
+            finished_at = COALESCE(finished_at, @finished_at),
+            status = 'failed',
+            errors_count = errors_count + 1,
+            error_message = @error_message
+          WHERE status = 'running'
+        `
+      )
+      .run({
+        finished_at: new Date().toISOString(),
+        error_message: errorMessage
+      });
+    return result.changes;
+  }
+
   upsertApprenticeship(record: ApprenticeshipRecord): UpsertOutcome {
     const dedupeKey = buildCrossSourceDedupeKey(record);
 
